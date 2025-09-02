@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>your info</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .info {
+            margin-bottom: 20px;
+        }
+        .screenshot {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">your ip address: <span id="ip"></span></div>
+    <div class="info">your ipv6: <span id="ipv6"></span></div>
+    <div class="info">your ipv4: <span id="ipv4"></span></div>
+    <div class="info">your isp: <span id="isp"></span></div>
+    <div class="info">your city: <span id="city"></span></div>
+    <div class="info">your region: <span id="region"></span></div>
+    <div class="info">your country: <span id="country"></span></div>
+    <div class="info">your time: <span id="time"></span></div>
+    <div class="info">time is 12/24?: <span id="timeFormat"></span></div>
+    <div class="info">your browser: <span id="browser"></span></div>
+    <div class="info">private or not private (incog): <span id="privateMode"></span></div>
+    <div class="screenshot">your browser ss: <img id="screenshot" alt="your browser screenshot seems cool btw :)"></div>
+    <div class="info">adios</div>
+
+    <script>
+        // Function to fetch IP address information
+        async function fetchIPInfo() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                document.getElementById('ip').textContent = data.ip;
+                document.getElementById('ipv6').textContent = data.ipv6 ? data.ipv6 : 'N/A';
+                document.getElementById('ipv4').textContent = data.ipv4 ? data.ipv4 : 'N/A';
+                document.getElementById('isp').textContent = data.org;
+                document.getElementById('city').textContent = data.city;
+                document.getElementById('region').textContent = data.region;
+                document.getElementById('country').textContent = data.country_name;
+            } catch (error) {
+                console.error('Error fetching IP info:', error);
+            }
+        }
+
+        // get current time
+        function getCurrentTime() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            const timeFormat = now.toLocaleTimeString([], { hour: 'numeric', hour12: true }).includes('AM') || now.toLocaleTimeString([], { hour: 'numeric', hour12: true }).includes('PM') ? '12' : '24';
+            document.getElementById('time').textContent = time;
+            document.getElementById('timeFormat').textContent = timeFormat;
+        }
+
+        // get browser info
+        function getBrowserInfo() {
+            const userAgent = navigator.userAgent;
+            const isPrivate = /Chrome\/(\d+)\.(\d+)\.(\d+)\.(\d+)/.test(userAgent) && /Incognito/.test(userAgent);
+            document.getElementById('browser').textContent = userAgent;
+            document.getElementById('privateMode').textContent = isPrivate ? 'Private' : 'Not Private';
+        }
+
+        // func to cap the screenshot
+        async function captureScreenshot() {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                const track = stream.getVideoTracks()[0];
+                const imageCapture = new ImageCapture(track);
+                const bitmap = await imageCapture.grabFrame();
+                const canvas = document.createElement('canvas');
+                canvas.width = bitmap.width;
+                canvas.height = bitmap.height;
+                const context = canvas.getContext('2d');
+                context.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height);
+                const dataUrl = canvas.toDataURL();
+                document.getElementById('screenshot').src = dataUrl;
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                console.error('Error capturing screenshot:', error);
+            }
+        }
+
+        // init
+        window.onload = () => {
+            fetchIPInfo();
+            getCurrentTime();
+            getBrowserInfo();
+            captureScreenshot();
+        };
+    </script>
+</body>
+</html>
