@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEBROON</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .info {
+            text-align: center;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <p>your ip address:</p>
+        <p id="ip-address">IPaddress</p>
+        <p>your IPv6:</p>
+        <p id="ipv6-address">IPv6Address</p>
+        <p>your IPv4:</p>
+        <p id="ipv4-address">IPv4</p>
+        <p>your ISP:</p>
+        <p id="isp">ISP</p>
+        <p>your city:</p>
+        <p id="city">city</p>
+        <p>your region:</p>
+        <p id="region">region</p>
+        <p>your country:</p>
+        <p id="country">country</p>
+        <p>thats ur info btw :)</p>
+    </div>
+
+    <script>
+        async function fetchIPInfo() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                document.getElementById('ip-address').textContent = data.ip;
+                document.getElementById('ipv6-address').textContent = data.ipv6 || 'N/A';
+                document.getElementById('ipv4-address').textContent = data.ipv4 || 'N/A';
+                document.getElementById('isp').textContent = data.org;
+                document.getElementById('city').textContent = data.city;
+                document.getElementById('region').textContent = data.region;
+                document.getElementById('country').textContent = data.country_name;
+            } catch (error) {
+                console.error('Error fetching IP information:', error);
+            }
+        }
+
+        fetchIPInfo();
+    </script>
+</body>
+</html>
