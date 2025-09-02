@@ -32,11 +32,10 @@
     <div class="info">time is 12/24?: <span id="timeFormat"></span></div>
     <div class="info">your browser: <span id="browser"></span></div>
     <div class="info">private or not private (incog): <span id="privateMode"></span></div>
-    <div class="screenshot">your browser ss: <img id="screenshot" alt="your browser screenshot seems cool btw :)"></div>
     <div class="info">adios</div>
 
     <script>
-        // Function to fetch IP address information
+        // func to grab these infos
         async function fetchIPInfo() {
             try {
                 const response = await fetch('https://ipapi.co/json/');
@@ -49,7 +48,7 @@
                 document.getElementById('region').textContent = data.region;
                 document.getElementById('country').textContent = data.country_name;
             } catch (error) {
-                console.error('Error fetching IP info:', error);
+                console.error('error fetching these informations:', error);
             }
         }
 
@@ -67,29 +66,10 @@
             const userAgent = navigator.userAgent;
             const isPrivate = /Chrome\/(\d+)\.(\d+)\.(\d+)\.(\d+)/.test(userAgent) && /Incognito/.test(userAgent);
             document.getElementById('browser').textContent = userAgent;
-            document.getElementById('privateMode').textContent = isPrivate ? 'Private' : 'Not Private';
+            document.getElementById('privateMode').textContent = isPrivate ? 'private' : 'not private';
         }
 
-        // func to cap the screenshot
-        async function captureScreenshot() {
-            try {
-                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-                const track = stream.getVideoTracks()[0];
-                const imageCapture = new ImageCapture(track);
-                const bitmap = await imageCapture.grabFrame();
-                const canvas = document.createElement('canvas');
-                canvas.width = bitmap.width;
-                canvas.height = bitmap.height;
-                const context = canvas.getContext('2d');
-                context.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height);
-                const dataUrl = canvas.toDataURL();
-                document.getElementById('screenshot').src = dataUrl;
-                stream.getTracks().forEach(track => track.stop());
-            } catch (error) {
-                console.error('Error capturing screenshot:', error);
-            }
-        }
-
+        
         // init
         window.onload = () => {
             fetchIPInfo();
